@@ -19,6 +19,7 @@ import java.util.Set;
  * parent child relation. 
  */
 public class Concept {
+	public static int relationInActivated = 0;
 	private String id;
 	public String label;
 
@@ -35,29 +36,40 @@ public class Concept {
 	public boolean visited = false;
 	public int toProcessed = 0;
 	
+	
+	/**
+	 * to deal with relation cancellations
+	 */
+	Date effectiveDate;
+	boolean active;
+
 
 
 	public void addToRef(ConceptRef ref) {
 		if (toRefs == null)
 			toRefs = new ArrayList<ConceptRef>();
+		
+		 if(ref.isActive())
+			toRefs.add(ref);
 
-		int index;
-		if(ref.getEffectiveDate() != null && (index = toRefs.indexOf(ref)) >= 0) {
-			ConceptRef old = toRefs.get(index);
-			if(old.getEffectiveDate().before(ref.getEffectiveDate())) {
-				if(ref.isActive()) {
-					toRefs.remove(index);
-					toRefs.add(ref);
-				} else {
-					toRefs.remove(index);
-				}
-			}
-		} else {
-			// make sure that we would add if the effective date has been set 
-			// and it is active
-			if(ref.getEffectiveDate() == null || ref.isActive())
-				toRefs.add(ref);
-		}
+//		int index;
+//		if(ref.getEffectiveDate() != null && (index = toRefs.indexOf(ref)) >= 0) {
+//			ConceptRef old = toRefs.get(index);
+//			if(old.getEffectiveDate().before(ref.getEffectiveDate())) {
+//				if(ref.isActive()) {
+//					toRefs.remove(index);
+//					toRefs.add(ref);
+//				} else {
+//					relationInActivated++;
+//					toRefs.remove(index);
+//				}
+//			}
+//		} else {
+//			// make sure that we would add if the effective date has been set 
+//			// and it is active
+//			if(ref.getEffectiveDate() == null || ref.isActive())
+//				toRefs.add(ref);
+//		}
 			
 	}
 
@@ -65,25 +77,40 @@ public class Concept {
 		if (fromRefs == null)
 			fromRefs = new ArrayList<ConceptRef>();
 
-		int index;
-		if(ref.getEffectiveDate() != null && (index = fromRefs.indexOf(ref)) >= 0) {
-			ConceptRef old = fromRefs.get(index);
-			if(old.getEffectiveDate().before(ref.getEffectiveDate())) {
-				if(ref.isActive()) {
-					fromRefs.remove(index);
-					fromRefs.add(ref);
-				} else {
-					fromRefs.remove(index);
-				}
-			}
-		} else {
-			// make sure that we would add if the effective date has been set 
-			// and it is active
-			if(ref.getEffectiveDate() == null || ref.isActive())
+		 if(ref.isActive())
 				fromRefs.add(ref);
-		}	
+		 
+		 
+//		int index;
+//		if(ref.getEffectiveDate() != null && (index = fromRefs.indexOf(ref)) >= 0) {
+//			ConceptRef old = fromRefs.get(index);
+//			if(old.getEffectiveDate().before(ref.getEffectiveDate())) {
+//				if(ref.isActive()) {
+//					fromRefs.remove(index);
+//					fromRefs.add(ref);
+//				} else {
+//					fromRefs.remove(index);
+//				}
+//			}
+//		} else {
+//			// make sure that we would add if the effective date has been set 
+//			// and it is active
+//			if(ref.getEffectiveDate() == null || ref.isActive())
+//				fromRefs.add(ref);
+//		}	
 	}
 
+	
+	public void removeToRef(ConceptRef ref){
+		if (toRefs != null)
+			toRefs.remove(ref);
+	}
+	
+	public void removeFromRef(ConceptRef ref){
+		if (fromRefs != null)
+			fromRefs.remove(ref);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -148,6 +175,22 @@ public class Concept {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

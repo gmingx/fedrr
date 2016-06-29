@@ -15,8 +15,9 @@ import java.util.Set;
 
 import fedrr.model.Concept;
 import fedrr.model.ConceptRef;
+import fedrr.model.ConceptRowData;
 import fedrr.model.Ontology;
-import fedrr.model.RelationRowData;
+import fedrr.model.SnomedRelationRowData;
 import fedrr.parser.Parser;
 
 /**
@@ -41,7 +42,7 @@ public class SnomedParser implements Parser {
 		this.loadConcepts(conceptFileName);
 
 		this.processRelations(relationFileName);
-		return new Ontology(this.conceptMap, this.allRelations);
+		return new Ontology(this.conceptMap);
 	}
 
 	public void loadConcepts(String conceptFileName) {
@@ -59,18 +60,37 @@ public class SnomedParser implements Parser {
 
 		while (input.hasNextLine()) {
 			String line = input.nextLine();
-			String[] lineData = line.split("\t");
-			if (!lineData[2].equals("1"))
+			ConceptRowData lineData = new ConceptRowData(line);
+			
+			
+			Concept concept = conceptMap.get(lineData.conceptId());
+
+			if (!lineData.active() || !lineData.isName())
 				continue;
-
-			Concept concept = conceptMap.get(String.valueOf(lineData[4]));
-
+		
 			if (concept == null) {
+//				if (!lineData.active() || !lineData.isName())
+//					continue;
+			
+
+				
 				concept = new Concept();
-				conceptMap.put(String.valueOf(lineData[4]), concept);
-				concept.setId(String.valueOf(lineData[4]));
-				concept.setLabel(lineData[7]);
-			}
+				conceptMap.put(lineData.conceptId(), concept);
+				concept.setId(lineData.conceptId());
+				concept.setLabel(lineData.getLabel());
+				concept.setActive(true);
+				concept.setEffectiveDate(lineData.getEffectiveDate());
+				
+
+			} 
+//			else {
+//				if (!lineData.active() && concept.getEffectiveDate().before(lineData.getEffectiveDate())) {
+//					conceptMap.remove(lineData.conceptId());
+//				} else if(lineData.active() && concept.getEffectiveDate().before(lineData.getEffectiveDate())){
+//					concept.setEffectiveDate(lineData.getEffectiveDate());
+//				}
+//					
+//			}
 
 		}
 
@@ -83,7 +103,7 @@ public class SnomedParser implements Parser {
 		String line = null;
 		int total = 0;
 		int nullCnt = 0;
-		RelationRowData data = null;
+		SnomedRelationRowData data = null;
 		try {
 
 			input = new Scanner(new FileInputStream(relationFileName));
@@ -94,7 +114,7 @@ public class SnomedParser implements Parser {
 			while (input.hasNextLine()) {
 				total++;
 				line = input.nextLine();
-				data = new RelationRowData(line);
+				data = new SnomedRelationRowData(line);
 				if (Long.parseLong(data.type()) != rel)
 					continue;
 

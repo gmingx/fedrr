@@ -36,7 +36,7 @@ public class GoParser implements Parser {
 		String conceptFileName = specs[0];
 		loadConcept(conceptFileName);
 		buildConceptRelation(conceptFileName);
-		return new Ontology(conceptMap, allRelations);
+		return new Ontology(conceptMap);
 	}
 	
 	

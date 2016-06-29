@@ -11,10 +11,11 @@ import java.util.Date;
  * @author Gaungming Xing
  * @date Jan 15, 2015
  */
-public class RelationRowData {
+public class SnomedRelationRowData {
+	static SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 	String[] fields;
 
-	public RelationRowData(String data) {
+	public SnomedRelationRowData(String data) {
 		fields = data.split("\t");
 	}
 
@@ -38,7 +39,7 @@ public class RelationRowData {
 	
 	public Date getEffectiveDate() {
 		try {
-			return new SimpleDateFormat("yyyyMMdd").parse(fields[1]);
+			return df.parse(fields[1]);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

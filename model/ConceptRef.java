@@ -18,6 +18,13 @@ public class ConceptRef {
 	Date effectiveDate;
 	boolean active;
 
+	
+	
+	
+	public ConceptRef() {
+		this.relation = "is_a";
+	}
+
 	public Concept getConcept() {
 		return concept;
 	}
@@ -45,6 +52,7 @@ public class ConceptRef {
 	public ConceptRef(Concept concept, String relation) {
 		this.concept = concept;
 		this.relation = relation;
+		this.active = true;
 	}
 	
 	
@@ -84,8 +92,6 @@ public class ConceptRef {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((concept == null) ? 0 : concept.hashCode());
-		result = prime * result
-				+ ((relation == null) ? 0 : relation.hashCode());
 		return result;
 	}
 
@@ -103,14 +109,10 @@ public class ConceptRef {
 				return false;
 		} else if (!concept.equals(other.concept))
 			return false;
-		if (relation == null) {
-			if (other.relation != null)
-				return false;
-		} else if (!relation.equals(other.relation))
-			return false;
 		return true;
 	}
 
+	
 	
 	
 }
